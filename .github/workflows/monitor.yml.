@@ -1,21 +1,27 @@
-name: Production Monitor
+name: Production Health Check Monitor
+
 on:
- schedule:
- - cron: '0 * * * *' # Chạy mỗi 1 giờ
+  schedule:
+    - cron: '0 * * * *' # Cứ mỗi 1 giờ máy chủ sẽ tự động chạy kiểm tra một lần
+  workflow_dispatch: # Cho phép bạn bấm nút chạy thủ công bất cứ lúc nào
+
 jobs:
- monitor-api:
- runs-on: ubuntu-latest
- steps:
- - uses: actions/checkout@v4
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
- - name: Cài đặt Postman CLI
-run: |
- curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
- - name: Đăng nhập Postman
- run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+      - name: Install Postman CLI
+        run: npm install -g postman-cli
 
- - name: Chạy kịch bản Monitor trực tiếp từ Cloud
- # Thay ID của Collection Monitor và ID của Environment vào đây
- run: |
- postman collection run "ID_CỦA_COLLECTION_MONITOR"
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Run Monitor / Collection
+        run: postman collection run Production_Monitor_Demo
