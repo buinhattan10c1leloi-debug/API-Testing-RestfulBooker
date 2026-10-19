@@ -1,27 +1,17 @@
-name: Production Health Check Monitor
+name: Automated API tests using Postman CLI
 
-on:
-  schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+on: push
 
 jobs:
   automated-api-tests:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Install Postman CLI
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-
+          powershell.exe -NoProfile -InputFormat None -ExecutionPolicy AllSigned -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://dl-cli.pstmn.io/install/win64.ps1'))"
       - name: Login to Postman CLI
-        run: |
-          export PATH="$PATH:$HOME/.local/bin"
-          postman login --with-api-key PMAK-6ad641ad2c96cb000148088d-e1814e4a85fe0c255ef2d17e70ec6dcb1a
-
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       - name: Run API tests
         run: |
-          export PATH="$PATH:$HOME/.local/bin"
-          postman collection run "34104301-5ea66b53-dd9b-47ef-840c-45823c2df9ce"
+          postman collection run "59055828-0122151a-52e2-4555-be26-d6852dec7e7f"
