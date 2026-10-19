@@ -6,19 +6,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  monitor:
+  automated-api-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: actions/checkout@v4
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Automated API tests using Postman CLI
+      - name: Install Postman CLI
         run: |
-          npm install -g postman-cli
-          postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-          postman collection run "ID_COLLECTION_CỦA_BẠN"
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Run API tests
+        run: |
+          postman collection run "34104301-5ea66b53-dd9b-47ef-840c-45823c2df9ce"
